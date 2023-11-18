@@ -149,7 +149,7 @@ class _QRViewState extends State<QRView> {
     return _platformQrView;
   }
 
-  void _onPlatformViewCreated(int id) {
+  void _onPlatformViewCreated(int id) async {
     _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id');
 
     // Start scan after creation of the view
@@ -157,8 +157,8 @@ class _QRViewState extends State<QRView> {
         _channel,
         widget.key as GlobalKey<State<StatefulWidget>>?,
         widget.onPermissionSet,
-        widget.cameraFacing)
-      .._startScan(widget.key as GlobalKey<State<StatefulWidget>>,
+        widget.cameraFacing);
+    await controller._startScan(widget.key as GlobalKey<State<StatefulWidget>>,
           widget.overlay, widget.formatsAllowed);
 
     // Initialize the controller for controlling the QRView
