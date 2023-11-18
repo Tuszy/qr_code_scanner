@@ -158,8 +158,8 @@ class _QRViewState extends State<QRView> {
         widget.key as GlobalKey<State<StatefulWidget>>?,
         widget.onPermissionSet,
         widget.cameraFacing);
-    await controller._startScan(widget.key as GlobalKey<State<StatefulWidget>>,
-          widget.overlay, widget.formatsAllowed);
+    await QRViewController.updateDimensions(widget.key as GlobalKey<State<StatefulWidget>>, _channel, overlay: widget.overlay);
+    controller._startScan(widget.formatsAllowed);
 
     // Initialize the controller for controlling the QRView
     widget.onQRViewCreated(controller);
@@ -226,11 +226,9 @@ class QRViewController {
   bool get hasPermissions => _hasPermissions;
 
   /// Starts the barcode scanner
-  Future<void> _startScan(GlobalKey key, QrScannerOverlayShape? overlay,
-      List<BarcodeFormat>? barcodeFormats) async {
+  Future<void> _startScan(List<BarcodeFormat>? barcodeFormats) async {
     // We need to update the dimension before the scan is started.
     try {
-      await QRViewController.updateDimensions(key, _channel, overlay: overlay);
       return await _channel.invokeMethod(
           'startScan', barcodeFormats?.map((e) => e.asInt()).toList() ?? []);
     } on PlatformException catch (e) {
